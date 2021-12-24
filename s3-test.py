@@ -7,6 +7,8 @@ import pandas as pd
 
 app = dash.Dash(__name__)
 
+server = app.server
+
 #test = pd.read_csv('s3://tridata/Santa-Cruz-Sprint.csv')
 #females = test[test['Gender']=='F']
 
