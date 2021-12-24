@@ -9,11 +9,11 @@ app = dash.Dash(__name__)
 
 server = app.server
 
-#test = pd.read_csv('s3://tridata/Santa-Cruz-Sprint.csv')
-#females = test[test['Gender']=='F']
+test = pd.read_csv('s3://tridata/Santa-Cruz-Sprint.csv')
+females = test[test['Gender']=='F']
 
-data = [[20, 10], [30, 15], [25, 14]]
-females = pd.DataFrame(data, columns = ['Age', 'Gender Place'])
+#data = [[20, 10], [30, 15], [25, 14]]
+#females = pd.DataFrame(data, columns = ['Age', 'Gender Place'])
 
 #print(test)
 #print(females)
@@ -24,7 +24,7 @@ app.layout = html.Div(children=[
     html.H1(children='Hi Samantha!!!'),
 
     html.Div(children='''
-        Dash: A web application framework for your data.
+        Here is some data from the Women at the Sata Cruz Sprint!
     '''),
 
     dcc.Graph(
