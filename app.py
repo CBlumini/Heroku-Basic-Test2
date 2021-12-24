@@ -9,11 +9,13 @@ app = dash.Dash(__name__)
 
 server = app.server
 
-#test = pd.read_csv('s3://tridata/Santa-Cruz-Sprint.csv')
-#females = test[test['Gender']=='F']
+test = pd.read_csv('https://github.com/CBlumini/heroku_dep_2/raw/main/Santa-Cruz-Sprint.csv', header=0, index_col=None)
 
-data = [[20, 10], [30, 15], [25, 14]]
-females = pd.DataFrame(data, columns = ['Age', 'Gender Place'])
+#test = pd.read_csv('s3://tridata/Santa-Cruz-Sprint.csv')
+females = test[test['Gender']=='F']
+
+#data = [[20, 10], [30, 15], [25, 14]]
+#females = pd.DataFrame(data, columns = ['Age', 'Gender Place'])
 
 #print(test)
 #print(females)
@@ -21,10 +23,10 @@ females = pd.DataFrame(data, columns = ['Age', 'Gender Place'])
 fig = px.scatter(females, x=females['Age'], y=females['Gender Place'])
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+    html.H1(children='Hi Samantha!!!'),
 
     html.Div(children='''
-        Dash: A web application framework for your data.
+        This is some data from the Women at the Sata Cruz Sprint!
     '''),
 
     dcc.Graph(
@@ -35,4 +37,3 @@ app.layout = html.Div(children=[
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
