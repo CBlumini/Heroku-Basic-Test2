@@ -53,6 +53,8 @@ time_df = create_time_columns(data)
 
 reduced2 = time_df[["Name","Swim Minutes","Swim+T1","Plus Bike","Plus T2","Total","Gender Place"]]
 reduced2["Start"] = 0
+reduced2 = reduced2[reduced2['Total']>0]
+
 
 #create the para coord plot
 dimensions = list([
