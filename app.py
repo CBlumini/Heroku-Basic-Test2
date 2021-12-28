@@ -7,7 +7,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import dash_table
 
-app = dash.Dash(__name__)
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 #set some colors
@@ -87,8 +89,9 @@ fig.update_layout(
     paper_bgcolor=colors['background'],
     font_color=colors['text']
 )
-#create a data table, name the columns
-dash_columns=["Bib", "Name", "Age", "Gender", "Team Name", "City", "Swim", "T1", "Bike", "T2", "Run", "Chip Elapsed", "Div Place", "Age Place", 
+
+#name the columns for the data table
+dash_columns=["Bib", "Name", "Age", "Gender", "City", "Swim", "T1", "Bike", "T2", "Run", "Chip Elapsed", "Div Place", "Age Place", 
               "Gender Place"]
 
 #layout the page
@@ -112,7 +115,7 @@ children=[
                             columns=[{'name': i, 'id': i} for i in dash_columns],
                             data=time_df.to_dict('records'),
                             style_table={'overflowX': 'scroll',},
-                                style_header={
+                            style_header={
                                              'backgroundColor': 'rgb(30, 30, 30)',
                                               'color': 'white'
                                             },
@@ -141,8 +144,13 @@ children=[
                         )),
 
     dcc.Graph(
-        id='example-graph',
+        id='Scatter',
         figure=fig
+    ),
+
+    dcc.Graph(
+        id='Par-Cor',
+        figure=para_cor
     )
 ])
 
