@@ -1,3 +1,4 @@
+from dash.development.base_component import Component
 import pandas as pd
 import dash
 from dash import dcc
@@ -5,7 +6,8 @@ from dash import html
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-import dash_table
+from dash import dash_table
+from dash.dependencies import Input, Output
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -87,13 +89,7 @@ para_cor.update_layout(
     font_color=colors['text'])
 
 
-#create the plots
-scat = px.scatter(females, x=females['Age'], y=females['Gender Place'])
-scat.update_layout(
-    plot_bgcolor=colors['background'],
-    paper_bgcolor=colors['background'],
-    font_color=colors['text']
-)
+
 
 #name the columns for the data table
 dash_columns=["Bib", "Name", "Age", "Gender", "City", "Swim", "T1", "Bike", "T2", "Run", "Chip Elapsed", "Div Place", "Age Place", 
@@ -107,9 +103,10 @@ children=[
         style={
             'textAlign': 'center',
             'color': colors['text'] 
-            }),
+    }),
 
-    html.Div(children='This app allows for performance plotting of certain local bay area triathalons.',
+    html.Div(
+    children='This app allows for performance plotting of certain local bay area triathalons.',
     style={
         'textAlign': 'center',
         'color': colors['text']
@@ -147,15 +144,52 @@ children=[
                         )),
 
     dcc.Graph(
-        id='Scatter',
-        figure=scat
+        id='graph-with-slider',
+        #figure=scat
+    ),
+
+    dcc.Slider(
+        id='place-slider',
+        min=reduced2['Gender Place'].min(),
+        max=200,
+        value=reduced2['Gender Place'].min(),
+        #marks={str(year): str(year) for year in reduced2['Gender Place'].unique()},
+        step=None,
+        marks={
+            10: '10',
+            25: '25',
+            50: '50',
+            100: '100',
+            200: '200'
+        }
     ),
 
     dcc.Graph(
         id='Par-Cor',
         figure=para_cor
-    )
+    ),
 ])
+
+@app.callback(
+    Output(component_id='graph-with-slider', component_property='figure'),
+    Input(component_id='place-slider', component_property='value'))
+def update_figure(places):
+    filtered_df=females[females['Gender Place']<=places]
+
+    #create the plots
+    scat = px.scatter(filtered_df, x=filtered_df['Age'], y=filtered_df['Gender Place'])
+    scat.update_layout(
+        plot_bgcolor=colors['background'],
+        paper_bgcolor=colors['background'],
+        font_color=colors['text']
+    )
+
+    return scat
+
+
+
+    
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
