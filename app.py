@@ -51,42 +51,13 @@ def create_time_columns(bare_frame):
     return bare_frame
 
 
-time_df = create_time_columns(data)
+time_df = create_time_columns(females)
+
+
 
 reduced2 = time_df[["Name","Swim Minutes","Swim+T1","Plus Bike","Plus T2","Total","Gender Place"]]
 reduced2["Start"] = 0
 reduced2 = reduced2[reduced2['Total']>60]
-
-
-#create the para coord plot
-dimensions = list([
-            dict(range = [0, 1],
-                label = 'Start', values = reduced2['Start']),            
-            dict(range = [reduced2["Swim Minutes"].min(), reduced2["Swim Minutes"].max()],
-                label = 'Time After Swim', values = reduced2['Swim Minutes']),
-            dict(range = [reduced2["Swim+T1"].min(), reduced2["Swim+T1"].max()],
-                label = 'Time After First Transition', values = reduced2['Swim+T1']),
-            dict(range = [reduced2["Plus Bike"].min(), reduced2["Plus Bike"].max()],
-                label = 'Time After Bike', values = reduced2['Plus Bike']),
-            dict(range = [reduced2["Plus T2"].min(), reduced2["Plus T2"].max()],
-                label = 'Time After Second Transition', values = reduced2['Plus T2']),
-            dict(range = [reduced2["Total"].min(), reduced2["Total"].max()],
-                label = 'Total Time', values = reduced2['Total']),
-            dict(range=[0,reduced2['Gender Place'].max()], tickvals = reduced2['Gender Place'], ticktext = reduced2['Name'],
-                    label='Competitor', values=reduced2['Gender Place'])
-        ])
-
-para_cor = go.Figure(data=go.Parcoords(line = dict(color = reduced2['Gender Place'],
-                colorscale = [[.0,'rgba(255,0,0,0.1)'],[0.2,'rgba(0,255,0,0.1)'],[.4,'rgba(0,0,255,0.1)'], 
-                                [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(255,255,255,0.1)']]),
-                                 dimensions=dimensions))
-
-para_cor.update_layout(
-    title="Triathalon Results",
-    height=1080,    
-    plot_bgcolor=colors['background'],
-    paper_bgcolor=colors['background'],
-    font_color=colors['text'])
 
 
 
@@ -149,7 +120,7 @@ children=[
     ),
 
     dcc.Slider(
-        id='place-slider',
+        id='scat-place-slider',
         min=reduced2['Gender Place'].min(),
         max=200,
         value=reduced2['Gender Place'].min(),
@@ -165,15 +136,31 @@ children=[
     ),
 
     dcc.Graph(
-        id='Par-Cor',
-        figure=para_cor
+        id='par-with-slider',
+        #figure=para_cor
+    ),
+
+        dcc.Slider(
+        id='par-place-slider',
+        min=reduced2['Gender Place'].min(),
+        max=200,
+        value=reduced2['Gender Place'].min(),
+        #marks={str(year): str(year) for year in reduced2['Gender Place'].unique()},
+        step=None,
+        marks={
+            10: '10',
+            25: '25',
+            50: '50',
+            100: '100',
+            200: '200'
+        }
     ),
 ])
 
 @app.callback(
     Output(component_id='graph-with-slider', component_property='figure'),
-    Input(component_id='place-slider', component_property='value'))
-def update_figure(places):
+    Input(component_id='scat-place-slider', component_property='value'))
+def update_figure_scat(places):
     filtered_df=females[females['Gender Place']<=places]
 
     #create the plots
@@ -186,6 +173,51 @@ def update_figure(places):
 
     return scat
 
+@app.callback(
+    Output(component_id='par-with-slider', component_property='figure'),
+    Input(component_id='par-place-slider', component_property='value'))
+def update_figure_scat(places):
+    reduced3 = females[["Name","Swim Minutes","Swim+T1","Plus Bike","Plus T2","Total","Gender Place"]]
+    reduced3["Start"] = 0
+    reduced3 = reduced3[reduced3['Plus Bike']>50]
+    reduced3 = reduced3[reduced3['Total']>60]
+    reduced3 = reduced3[reduced3['Gender Place']>=1]
+    reduced3 = reduced3[reduced3['Gender Place']<=places]
+    print(reduced3)
+
+
+    #create the para coord plot
+    dimensions = list([
+                dict(range = [0, 1],
+                    label = 'Start', values = reduced3['Start']),            
+                dict(range = [reduced3["Swim Minutes"].min(), reduced3["Swim Minutes"].max()],
+                    label = 'Time After Swim', values = reduced3['Swim Minutes']),
+                dict(range = [reduced3["Swim+T1"].min(), reduced3["Swim+T1"].max()],
+                    label = 'Time After First Transition', values = reduced3['Swim+T1']),
+                dict(range = [reduced3["Plus Bike"].min(), reduced3["Plus Bike"].max()],
+                    label = 'Time After Bike', values = reduced3['Plus Bike']),
+                dict(range = [reduced3["Plus T2"].min(), reduced3["Plus T2"].max()],
+                    label = 'Time After Second Transition', values = reduced3['Plus T2']),
+                dict(range = [reduced3["Total"].min(), reduced3["Total"].max()],
+                    label = 'Total Time', values = reduced3['Total']),
+                dict(range=[0,reduced3['Gender Place'].max()], tickvals = reduced3['Gender Place'], ticktext = reduced3['Name'],
+                        label='Competitor', values=reduced3['Gender Place'])
+            ])
+
+    para_cor = go.Figure(data=go.Parcoords(line = dict(color = reduced3['Gender Place'],
+                    colorscale = [[.0,'rgba(255,0,0,0.1)'],[0.2,'rgba(0,255,0,0.1)'],[.4,'rgba(0,0,255,0.1)'], 
+                                    [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(255,255,255,0.1)']]),
+                                    dimensions=dimensions))
+
+    para_cor.update_layout(
+        title="Triathalon Results",
+        height=1080,    
+        plot_bgcolor=colors['background'],
+        paper_bgcolor=colors['background'],
+        font_color=colors['text'])
+
+
+    return para_cor
 
 
     
