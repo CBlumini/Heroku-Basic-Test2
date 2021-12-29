@@ -76,17 +76,20 @@ dimensions = list([
 
 para_cor = go.Figure(data=go.Parcoords(line = dict(color = reduced2['Gender Place'],
                 colorscale = [[.0,'rgba(255,0,0,0.1)'],[0.2,'rgba(0,255,0,0.1)'],[.4,'rgba(0,0,255,0.1)'], 
-                                [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(0,0,0,0.1)']]), dimensions=dimensions))
+                                [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(255,255,255,0.1)']]),
+                                 dimensions=dimensions))
 
 para_cor.update_layout(
     title="Triathalon Results",
-    width=1920,
-    height=1080)
+    height=1080,    
+    plot_bgcolor=colors['background'],
+    paper_bgcolor=colors['background'],
+    font_color=colors['text'])
 
 
 #create the plots
-fig = px.scatter(females, x=females['Age'], y=females['Gender Place'])
-fig.update_layout(
+scat = px.scatter(females, x=females['Age'], y=females['Gender Place'])
+scat.update_layout(
     plot_bgcolor=colors['background'],
     paper_bgcolor=colors['background'],
     font_color=colors['text']
@@ -116,20 +119,18 @@ children=[
                             id='table-sorting-filtering',
                             columns=[{'name': i, 'id': i} for i in dash_columns],
                             data=time_df.to_dict('records'),
-                            style_table={'overflowX': 'scroll',},
+                            style_table={'overflowX': 'auto'},
                             style_header={
                                              'backgroundColor': 'rgb(30, 30, 30)',
                                               'color': 'white'
-                                            },
-                            style_data={
-                                             'backgroundColor': 'rgb(50, 50, 50)',
-                                           'color': 'white'
                                             },
                             style_cell={
                                 'height': '90',
                                 #'minWidth': '110%',
                                 'minWidth': '60px', 'width': '100px', 'maxWidth': '140px',
-                                'whiteSpace': 'normal', 'textAlign': 'center'},
+                                'whiteSpace': 'normal', 'textAlign': 'center',
+                                'backgroundColor': 'rgb(50, 50, 50)',
+                                           'color': 'white'},
                             style_cell_conditional=[        {
                                 'if': {'column_id': 'Name'},
                                 'textAlign': 'center'
@@ -147,7 +148,7 @@ children=[
 
     dcc.Graph(
         id='Scatter',
-        figure=fig
+        figure=scat
     ),
 
     dcc.Graph(
