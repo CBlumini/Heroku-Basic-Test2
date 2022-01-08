@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import dash_table
 from dash.dependencies import Input, Output
-import convert_time
+from convert_time import convertTime
 pd.options.mode.chained_assignment = None  # default='warn'
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -30,17 +30,18 @@ females = data[data['Gender']=='F']
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
 #maybe setup a compute file to do this by itself later
 def create_time_columns(bare_frame):
+    #######doing this broke the code. something wrong with the module import
     #def convertTime (time):
      #   temp = time.split(':')
       #  timeMinutes = (int(temp[0])*60)+int(temp[1])+int(temp[2])/60
        # return timeMinutes
 
     #convert to integers
-    bare_frame["Swim Minutes"] = bare_frame["Swim"].apply(convert_time)
-    bare_frame["T1 Minutes"] = bare_frame["T1"].apply(convert_time)
-    bare_frame["Bike Minutes"] = bare_frame["Bike"].apply(convert_time)
-    bare_frame["T2 Minutes"] = bare_frame["T2"].apply(convert_time)
-    bare_frame["Run Minutes"] = bare_frame["Run"].apply(convert_time)
+    bare_frame["Swim Minutes"] = bare_frame["Swim"].apply(convertTime)
+    bare_frame["T1 Minutes"] = bare_frame["T1"].apply(convertTime)
+    bare_frame["Bike Minutes"] = bare_frame["Bike"].apply(convertTime)
+    bare_frame["T2 Minutes"] = bare_frame["T2"].apply(convertTime)
+    bare_frame["Run Minutes"] = bare_frame["Run"].apply(convertTime)
     #bare_frame["Elapsed Minutes"] = bare_frame["Chip Elapsed"].apply(convert_time)
 
     #create cumulative times
